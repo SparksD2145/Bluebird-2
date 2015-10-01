@@ -1,0 +1,213 @@
+//-
+    @file Product page.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+div(layout="column  ")
+    div(flex, ng-hide="isLoaded || productNotFound", layout="column").text-center
+        //-img(src="/static/images/logos/bluebird-logo-small.png").animate-spin-z
+        div(layout-align="center center", layout).progress.huge
+            md-progress-circular(md-mode="indeterminate", md-diameter="200").md-accent
+        h3 Retrieving...
+
+    div(flex, ng-show="productNotFound", layout-padding)
+        h4
+            strong Darn!
+        p It looks like the SKU for this product doesn't exist! Perhaps searching for the product by name might yield the product you are looking for.
+
+    div(ng-show="isLoaded && !productNotFound", layout-sm="column", layout="row", layout-wrap, layout-padding)
+        div(flex="50", flex-sm="100", layout="column")
+            div
+                div(flex, flex-sm="100", layout-align-sm="center center", layout-align="center start")
+                    a(ng-href="{{product.images.largeFrontImage}}" target="_new")
+                        img.img-thumbnail.product-header-img(ng-src="{{product.images.image}}")
+                div(flex)
+                    div.row
+                        div.col-xs-12
+                            h2 {{ product.name }}
+                    div(layout="row").spaced
+                        div(flex)
+                            strong SKU:
+                            | &nbsp;
+                            div {{ product.identifiers.sku }}
+                        div(flex)
+                            strong
+                                abbr(title="Universal Product Code") UPC:
+                            | &nbsp;
+                            div {{ product.identifiers.upc }}
+                        div(flex, ng-if="product.identifiers.modelNumber")
+                            strong
+                                strong Model:
+                            | &nbsp;
+                            div {{ product.identifiers.modelNumber }}
+                    div.row.spaced(ng-if="product.descriptions.longDescription")
+                        div.col-xs-12
+                            p {{ product.descriptions.longDescription }}
+
+            // Pricing
+            div
+                h4 Pricing
+                div(flex-gt-sm="50", flex-sm="100", layout="row")
+                    div(flex, ng-if="product.pricing.isOnSale")
+                        h5.text-danger
+                            strong Sale Price: {{ product.pricing.salePrice | currency }}
+                        h5.text-danger
+                            small {{ product.savings.percentSavings }}% Off
+
+                    div(flex, ng-if="product.pricing.isOnSale").text-right
+                        h6 Regular Price: {{ product.pricing.regularPrice | currency }}
+                        h5
+                            small (Save {{ product.savings.dollarSavings | currency }})
+
+                    div(flex, ng-if="!product.pricing.isOnSale")
+                        div.col-xs-12
+                            h5 Regular Price: {{ product.pricing.regularPrice | currency }}
+
+                div.col-xs-12.col-sm-6(ng-if="product.pricing.priceWithPlan && product.pricing.priceWithPlan.length > 0")
+                    div.row.spaced
+                        div.col-xs-12
+                            h4 Cellular Pricing
+                    div.row.spaced-small
+                        div.col-xs-12
+                            div.row
+                                div.col-xs-6
+                                    h6 New Two-year Contract: {{ product.pricing.priceWithPlan[0].newTwoYearPlan | currency }}
+                                div.col-xs-6.text-right
+                                    h6 With Two-Year Upgrade: {{ product.pricing.priceWithPlan[0].upgradeTwoYearPlan | currency }}
+
+        // Reviews
+        div(flex="50", flex-sm="100", ng-if="product.reviews.customerReviewCount", layout="column")
+            div
+                h4 Reception
+            div.spaced-small(layout="row")
+                div(flex)
+                    p This product has been {{ product.reviews.adjective }} recieved. <br>Our inventory system indicates this item {{ product.reviews.isCustomerTopRated? 'as' : 'as not' }} top rated.
+                div(flex="22", layout="column").text-right
+                    div: md-icon(ng-repeat="reviewStars in product.reviews.reviewStars", style="color: orange; width: 15px;") star
+                    div: small &nbsp;({{ product.reviews.customerReviewCount }} reviews)
+
+
+
+        // QR CODE
+        div(flex="50", flex-sm="100", layout="column").well
+            div.text-center
+                h5.text-center Point-of-Sale Optical Scanner
+            div(layout="row").spaced
+                div(style="padding: 1px;", flex).text-center
+                    qrcode(data="{{ product.identifiers.sku }}", size="80")
+                    h6.text-muted SKU
+                div(style="padding: 1px;", flex).text-center
+                    qrcode(data="{{ product.identifiers.upc }}", size="80")
+                    h6.text-muted UPC
+
+                div(style="padding: 1px;", flex).text-center
+                    a(ng-href="{{ product.urls.mobileUrl }}", target="_new", ng-if="product.urls.mobileUrl")
+                        qrcode(data="{{ product.urls.mobileUrl }}", size="80")
+                        h6 BestBuy.com URL
+                div(style="padding: 35px 10px; height: 90px; vertical-align:middle;", ng-if="!product.urls.mobileUrl").panel.panel-warning.text-center
+                    h6.text-warning URL Unavailable!
+
+        // Details
+        div(flex="50", flex-sm="100", layout="column")
+            div
+                h4 Details
+            div
+                ul.list-unstyled
+                    li.text-warning(ng-if="product.marketplace.isMarketplaceItem") This item is a marketplace item.
+                    li(ng-if="!product.availability.isActive")
+                        strong.text-danger This product is no longer active in our inventory.
+                    li(ng-if="product.availability.isSpecialOrder") Currently, this product is marked as a special order item.
+                    li Maximum {{ product.availability.quantityLimit }} per person. &nbsp;
+                    li {{ product.availability.hasOnlineAvailability? "Available" : "Not available" }} for online ordering. &nbsp;
+                    li(ng-if="product.availability.releaseDateValid") Available as of {{ product.availability.releaseDate }}.
+                    li This product {{ product.availability.isFreeShippingEligible? "is" : "is not" }} eligible for free shipping.
+                    li When ordering, this product {{ product.availability.hasInStorePickup? "has" : "does not have" }} personal store pickup{{ product.availability.hasFriendsAndFamilyPickup? " and pickup by friends and family." : "." }}
+
+        // Product Inventory
+        div(flex="50", flex-sm="100", ng-show="!availabilityLoaded")
+            div.well.text-center
+                h5
+                    div(style="display:inline-block; vertical-align: middle").animate-spin-z
+                        img(src="/static/images/logos/bluebird-logo-small.png")
+                br
+                h5 Retrieving Availability...
+
+        div(flex="50", flex-sm="100", ng-show="geolocationUnavailable && availabilityLoaded")
+            div.row
+                div.col-xs-12
+                    h4 Availability
+                div.col-xs-12.spaced-small
+                    div.alert.alert-warning
+                        strong Uh oh! &nbsp;
+                        span It seems this as though your device's geolocation abilities are either disabled or simply unusable. Availability by current location is, well, unavailable for the time being.
+
+        div(flex="50", flex-sm="100", ng-show="!geolocationUnavailable && availabilityLoaded", layout="column")
+            div(style="margin-bottom: 0", flex, layout="column" ng-if="product.availability.anyStores")
+                h4 Available in the following stores:
+                div(ng-repeat="store in product.stores", layout="row", layout-margin).store
+                    div(flex) {{ store.name }}
+                        small &nbsp; \#{{ store.storeId }}
+                    div(flex).text-right
+                        abbr(title="Phone Number") P
+                        | : &nbsp;
+                        a(ng-href="{{ store.phone }}") {{ store.phoneNumber }}
+
+            div(ng-show="!product.availability.anyStores && availabilityLoaded").spaced
+                h4 Availability
+                div.alert.alert-warning
+                    strong Darn! &nbsp;
+                    span It seems this product is not in stock within a 25 mile radius of your current location. &nbsp;
+                    span(ng-if="product.availability.hasOnlineAvailability") However, it is available for online order! &nbsp;
+                    span(ng-if="!product.availability.hasOnlineAvailability") It looks like it isn't available for online ordering either! &nbsp;
+                    span(ng-if="product.availability.isActive == false"): strong This may be because the product is no longer active in our inventory.
+
+            // Alternate area search
+            div.spaced(ng-if="allowAlternateAreaSearch && product.availability.isActive")
+                h4 Alternate Zip Code Search
+            div.spaced-small(ng-if="allowAlternateAreaSearch && product.availability.isActive")
+                form(ng-submit="getAvailabilityByZipCode()")
+                    div(layout="row")
+                        select(ng-model="radius", id="radiusValue", flex="65")
+                            option(value=5) Check within 5 Miles of
+                            option(value=10) Check within 10 Miles of
+                            option(value=20) Check within 20 Miles of
+                            option(value=25) Check within 25 Miles of
+                            option(value=30) Check within 30 Miles of
+                            option(value=40) Check within 40 Miles of
+                            option(value=50) Check within 50 Miles of
+                            option(value=60) Check within 60 Miles of
+                        input(type="text", maxlength=5, ng-model="zipcode", id="zipcodeText", placeholder="Zip Code", style="width:100%;")
+
+                    md-button(ng-click="getAvailabilityByZipCode()", style="width:100%; margin: 10px 0;").md-primary.md-raised Check!
+
+        // Protection Plans
+        div(flex="50", flex-sm="100")
+            div(ng-if="product.plans.protectionPlans.length > 0", layout="column")
+                h4 Protection Plans
+                div.row.spaced-small(ng-repeat="plan in product.plans.protectionPlans", layout="row")
+                    div(flex="75")
+                        p {{ plan.name }}<br>
+                            small.text-muted {{ plan.sku }}
+                    div(flex="25").text-right
+                        span {{ plan.regularPrice | currency }}
+                        br
+                        small.text-muted {{ plan.type }}
+            div(ng-if="product.plans.protectionPlans.length == 0", layout="column")
+                h4 Protection Plans
+                div.alert.alert-info.spaced-small
+                    span There are no protection plans available for this product.
+
+        //-div(flex="50", flex-sm="100")
+            div.row
+                div.col-xs-12
+                    h4 Product Breakdown
+            div.row.spaced-small
+                div.col-xs-12.text-left
+                    ol
+                        li
+                            h5 {{ product.classes.department }}
+                        li
+                            h5 {{ product.classes.class }}
+                        li
+                            h5 {{ product.classes.subclass }}
+    if devMode
+        div.row(ng-show="isLoaded").spaced
+            pre {{ product | json }}

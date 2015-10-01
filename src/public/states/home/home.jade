@@ -1,0 +1,18 @@
+//-
+    @file Home page of Bluebird.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+
+div(layout="column", flex=100, flex-gt-md=50, layout-padding, layout-align="center center").sbg-primary
+    div.application.well.md-whiteframe-5dp
+        p
+            img(src="/static/images/logos/bluebird-logo.png", width="300")
+        h1.md-display-3.text-center Bluebird
+        h3.md-headline.text-center Pocket Product Reference Engine
+        p.text-center &quot;{{ quote }}&quot;
+
+        p.text-muted.text-center
+            | Powered with the Best Buy Developer APIs.
+            br
+            | Built by the Bluebird Team.
+
+        md-button(href="/#!/about", role="button").md-primary.md-raised Learn more

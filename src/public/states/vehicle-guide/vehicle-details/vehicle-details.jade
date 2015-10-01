@@ -1,0 +1,595 @@
+//-
+    @file Vehicle Guide Details page.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+
+div.row(ng-show="vehicleLoading")
+    div.col-xs-12.module
+        div.jumbotron.text-center
+            h1
+                div(style="width:140px; display:inline-block; vertical-align: middle")
+                    img(src="/static/images/logos/bluebird-logo-small.png").img-responsive.fa-spin
+            br
+            h3(ng-if="!extendedSearch") Spinning our Tires
+            h5: small (This may take a bit, sit tight!)
+
+div.row(ng-show="vehicleTrimRequired && !vehicleLoading")
+    div.col-xs-12.col-sm-4.module
+        div.jumbotron.text-center
+            h1
+                div(style="width:140px; display:inline-block; vertical-align: middle")
+                    img(src="/static/images/logos/bluebird-logo-small.png").img-responsive
+            br
+
+            p
+                h2 Oh snap!
+                | This vehicle has more than one associated trim type, we need a little more information from you to complete this search. Please select the vehicle's trim.
+            br
+            div.row
+                select(ng-model="trimSelected").col-xs-12
+                    option(ng-repeat="trim in vehicleTrims", value="{{ trim }}") {{ trim }}
+            div.row
+                div.col-xs-12
+                    br
+                    input.btn.btn-primary(type="submit", role="button", ng-click="getVehicle()", value="Go!")
+
+div.row(ng-show="vehicle && !vehicleLoading")
+    div.col-xs-12.module
+
+        // Title Heading
+        div.row
+            div.col-xs-12.col-sm-6
+                h1  {{ vehicle.model }}
+                h2: small.
+                    {{ vehicle.make }}
+                    <span ng-if="vehicle.trim">{{ vehicle.trim }} </span>
+                    ({{ vehicle.year_from }} - {{ vehicle.year_to }})
+                br
+
+            // Images
+            div.col-xs-12.col-sm-6
+                a(ng-href="{{ image.url }}", ng-repeat="image in vehicle.images")
+                    img(ng-src="{{ image.thumbnailUrl }}", width="75")
+
+        // Fit Information
+        div.row.spaced(ng-if="vehicle.fit")
+            div.col-xs-12
+                h3 Fitting Information
+
+                div.row.spaced-small
+
+                    // Radio Fit
+                    div.col-xs-12.col-sm-6.col-md-4(ng-if="vehicle.fit.radio")
+                        table.table.table-bordered.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="2")
+                                        h5 Radio
+                            tbody
+                                tr
+                                    th Size
+                                    td {{ vehicle.fit.radio.size }}
+                                tr(ng-if="vehicle.fit.radio.notes")
+                                    th Notes
+                                    td {{ vehicle.fit.radio.notes }}
+
+                    // Front Speakers Fit
+                    div.col-xs-12.col-sm-6.col-md-4(ng-if="vehicle.fit.front_speaker")
+                        table.table.table-bordered.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="2")
+                                        h5 Front Speakers
+                            tbody(ng-repeat="speaker in vehicle.fit.front_speaker")
+                                tr(ng-if="speaker.size")
+                                    th S{{ $index + 1 }} Size
+                                    td {{ speaker.size }}
+                                tr(ng-if="speaker.depth")
+                                    th S{{ $index + 1 }} Depth
+                                    td {{ speaker.depth }}
+                                tr(ng-if="speaker.location")
+                                    th S{{ $index + 1 }} Location
+                                    td {{ speaker.location }}
+                            tfoot(ng-if="vehicle.fit.front_speaker.notes")
+                                tr
+                                    th Notes
+                                    td {{ vehicle.fit.front_speaker.notes }}
+
+                    // Rear Speakers Fit
+                    div.col-xs-12.col-sm-6.col-md-4(ng-if="vehicle.fit.rear_speaker")
+                        table.table.table-bordered.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="2")
+                                        h5 Rear Speakers
+                            tbody(ng-repeat="speaker in vehicle.fit.rear_speaker")
+                                tr(ng-if="speaker.size")
+                                    th S{{ $index + 1 }} Size
+                                    td {{ speaker.size }}
+                                tr(ng-if="speaker.depth")
+                                    th S{{ $index + 1 }} Depth
+                                    td {{ speaker.depth }}
+                                tr(ng-if="speaker.location")
+                                    th S{{ $index + 1 }} Location
+                                    td {{ speaker.location }}
+                            tfoot(ng-if="vehicle.fit.rear_speaker.notes")
+                                tr
+                                    th Notes
+                                    td {{ vehicle.fit.rear_speaker.notes }}
+
+        // Radio Installation information
+        div.row.spaced(ng-if="vehicle.radio")
+            div.col-xs-12
+                h3 Radio Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.radio.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.radio.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's radio services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.radio.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.radio.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's radio services have no associated labor costs.
+
+                // Radio Installation Notes
+                div.row.spaced-small(ng-if="vehicle.radio.notes")
+                    div.col-xs-12(ng-if="vehicle.radio.notes.tech_tip")
+                        div.alert.alert-warning
+                            h5 Radio Tech Tip
+                            p {{ vehicle.radio.notes.tech_tip }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.notes.factory_amp_notes")
+                        div.alert.alert-info
+                            h5 Factory Amplifier Notes
+                            p {{ vehicle.radio.notes.factory_amp_notes }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.notes.factory_amp_tech_tip")
+                        div.alert.alert-warning
+                            h5 Factory Amplifier Tech Tip
+                            p {{ vehicle.radio.notes.factory_amp_tech_tip }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.notes.rear_seat_entertainment_notes")
+                        div.alert.alert-info
+                            h5 Rear Reat Entertainment Notes
+                            p {{ vehicle.radio.notes.rear_seat_entertainment_notes }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.radio.notes.rear_seat_entertainment_tech_tip")
+                        div.alert.alert-warning
+                            h5 Rear Reat Entertainment Tech Tip
+                            p {{ vehicle.radio.notes.factory_amp_tech_tip }}
+
+        // Amplifier information
+        div.row.spaced(ng-if="vehicle.amp")
+            div.col-xs-12
+                h3 Amplifier Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.amp.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.amp.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.amp.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's amplifier services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.amp.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.amp.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.amp.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's amplifier services have no associated labor costs.
+
+        // Speaker Installation information
+        div.row.spaced(ng-if="vehicle.speaker")
+            div.col-xs-12
+                h3 Speaker Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.speaker.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.speaker.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.speaker.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's speaker services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.speaker.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.speaker.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.speaker.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's speaker services have no associated labor costs.
+
+                // Speaker Installation Notes
+                div.row.spaced-small(ng-if="vehicle.speaker.notes")
+                    div.col-xs-12(ng-if="vehicle.speaker.notes.tech_tip")
+                        div.alert.alert-warning
+                            h5 Speaker Installation Tech Tip
+                            p {{ vehicle.speaker.notes.tech_tip }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.speaker.notes.speaker_impedance")
+                        div.alert.alert-info
+                            h5 Speaker Impedance
+                            p {{ vehicle.speaker.notes.speaker_impedance }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.speaker.notes.other_speaker")
+                        div.alert.alert-info
+                            h5 Other Speaker
+                            p {{ vehicle.speaker.notes.other_speaker }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.speaker.notes.other_speaker_notes")
+                        div.alert.alert-info
+                            h5 Speaker Notes
+                            p {{ vehicle.speaker.notes.other_speaker_notes }}
+
+        // Auxillary Installation information
+        div.row.spaced(ng-if="vehicle.aux")
+            div.col-xs-12
+                h3 Auxillary Input Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.aux.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.aux.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.aux.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's auxillary input services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.aux.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.aux.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.aux.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's auxillary input services have no associated labor costs.
+
+                    // Auxillary Installation Notes
+                    div.col-xs-12
+                        div.row.spaced-small(ng-if="vehicle.aux.notes")
+                            div.col-xs-12.col-sm-6(ng-if="vehicle.aux.notes.bluetooth_kit")
+                                h5 Bluetooth Kit Notes
+                                p {{ vehicle.aux.notes.bluetooth_kit }}
+                            div.col-xs-12.col-sm-6(ng-if="vehicle.aux.notes.smartphone_interface")
+                                h5 Smartphone Interface Notes
+                                p {{ vehicle.aux.notes.smartphone_interface }}
+
+
+        // Satellite Radio Installation information
+        div.row.spaced(ng-if="vehicle.satellite")
+            div.col-xs-12
+                h3 Satellite Radio Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.satellite.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.satellite.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.satellite.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's satellite radio services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.satellite.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.satellite.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.satellite.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's satellite radio services have no associated labor costs.
+
+                // Satellite Radio Installation Notes
+                div.row.spaced-small(ng-if="vehicle.satellite.notes")
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.satellite.notes.fm_mod_tech_tip")
+                        div.alert.alert-warning
+                            h5 FM Modification Tech Tip
+                            p {{ vehicle.satellite.notes.fm_mod_tech_tip }}
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.satellite.notes.notes")
+                        div.alert.alert-info
+                            h5 Installation Notes
+                            p {{ vehicle.satellite.notes.notes }}
+
+        // Remote Start Installation information
+        div.row.spaced(ng-if="vehicle.remotestart")
+            div.col-xs-12
+                h3 Remote Start Installation
+
+                div.row.spaced-small
+
+                    // Parts
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.parts")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Parts
+                            tbody
+                                tr(ng-repeat='(key, part) in vehicle.remotestart.parts', ng-if="part.sku")
+                                    th {{ part.label }}
+                                    td
+                                        a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                    td
+                                        <strong>SKU:</strong> {{ part.sku }}
+                                    td.
+                                        {{ part.price | currency }}
+                    // If No Parts
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.remotestart.parts")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's remote start services have no associated parts.
+
+                    // Labor
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.labor")
+                        table.table.table-bordered.table-striped.table-responsive
+                            thead
+                                tr.info
+                                    th(colspan="4")
+                                        h5 Labor
+                            tbody
+                                tr(ng-repeat='(key, labor) in vehicle.remotestart.labor', ng-if="labor.sku")
+                                    th {{ labor.label }}
+                                    td.
+                                        {{ labor.description }}
+                                    td
+                                        <strong>SKU:</strong> {{ labor.sku }}
+                                    td.
+                                        {{ labor.price | currency }}
+                    // If No Labor
+                    div.col-xs-12.col-sm-6(ng-if="!vehicle.remotestart.labor")
+                        div.alert.alert-info <strong>All clear!</strong> This vehicle's remote start services have no associated labor costs.
+
+                div.row.spaced-small(ng-if="vehicle.remotestart.modules")
+                    div.col-xs-12
+                        h4 Remote Start Modules
+                        div.container-fluid
+                            div.row.spaced.well(ng-repeat="module in vehicle.remotestart.modules")
+                                div.col-xs-12
+                                    div.alert.alert-info
+                                        h5 <strong> Module {{ $index + 1 }}: {{ module.model }} </strong>
+                                            div.row
+                                                div.col-xs-12.col-sm-4
+                                                    p Type: {{ module.type }}
+                                                div.col-xs-12.col-sm-4
+                                                    p Transmission Type: {{ module.transmitter_type }}
+                                                div.col-xs-12.col-sm-4
+                                                    p Manual Transmission: {{ module.manual_transmission }}
+                                                div.col-xs-12.col-sm-4
+                                                    p Range: {{ module.range }}
+                                                div.col-xs-12.col-sm-4
+                                                    p Smartphone: {{ module.smartphone }}
+
+                                // Parts
+                                div.col-xs-12.col-sm-6(ng-if="module.parts")
+                                    table.table.table-bordered.table-striped.table-responsive
+                                        thead
+                                            tr.info
+                                                th(colspan="4")
+                                                    h5 Parts
+                                        tbody
+                                            tr(ng-repeat='(key, part) in module.parts', ng-if="part.sku")
+                                                th {{ part.label }}
+                                                td
+                                                    a(ng-href="{{ part.url }}", target="_new") {{ part.description }} <span ng-if="part.model"> - {{ part.model }}</span>
+                                                td
+                                                    <strong>SKU:</strong> {{ part.sku }}
+                                                td.
+                                                    {{ part.price | currency }}
+                                // If No Parts
+                                div.col-xs-12.col-sm-6(ng-if="!module.parts")
+                                    div.alert.alert-info <strong>All clear!</strong> This remote start module has no associated parts.
+
+                                // Labor
+                                div.col-xs-12.col-sm-6(ng-if="module.labor")
+                                    table.table.table-bordered.table-striped.table-responsive
+                                        thead
+                                            tr.info
+                                                th(colspan="4")
+                                                    h5 Labor
+                                        tbody
+                                            tr(ng-repeat='(key, labor) in module.labor', ng-if="labor.sku")
+                                                th {{ labor.label }}
+                                                td.
+                                                    {{ labor.description }}
+                                                td
+                                                    <strong>SKU:</strong> {{ labor.sku }}
+                                                td.
+                                                    {{ labor.price | currency }}
+                                // If No Labor
+                                div.col-xs-12.col-sm-6(ng-if="!module.labor")
+                                    div.alert.alert-info <strong>All clear!</strong> This remote start module has no associated labor costs.
+
+
+                // Remote Start Installation Notes
+                div.row.spaced-small(ng-if="vehicle.remotestart.notes")
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.door_lock")
+                        div.alert.alert-info
+                            h5 Door Lock Notes
+                            p {{ vehicle.remotestart.notes.door_lock }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.door_trigger")
+                        div.alert.alert-info
+                            h5 Door Trigger Notes
+                            p {{ vehicle.remotestart.notes.door_trigger }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.factory_alarm")
+                        div.alert.alert-info
+                            h5 Factory Alarm System Notes
+                            p {{ vehicle.remotestart.notes.factory_alarm }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.factory_immobilizer")
+                        div.alert.alert-info
+                            h5 Factory Immobilizer Notes
+                            p Factory Immobilizer included: {{ vehicle.remotestart.notes.factory_immobilizer }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.key_switch_relays")
+                        div.alert.alert-info
+                            h5 Key Switch Relay Notes
+                            p {{ vehicle.remotestart.notes.key_switch_relays }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.keys_required")
+                        div.alert.alert-info
+                            h5 Keys Required:
+                            p {{ vehicle.remotestart.notes.keys_required }}
+
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.module_hint")
+                        div.alert.alert-info
+                            h5 Module Hint
+                            p {{ vehicle.remotestart.notes.module_hint }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.notes")
+                        div.alert.alert-info
+                            h5 Notes
+                            p {{ vehicle.remotestart.notes.notes }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.parking_light")
+                        div.alert.alert-info
+                            h5 Parking Light Notes
+                            p {{ vehicle.remotestart.notes.parking_light }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.proximity_key")
+                        div.alert.alert-info
+                            h5 Proximity Key Notes
+                            p {{ vehicle.remotestart.notes.proximity_key }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.trunk_release")
+                        div.alert.alert-warning
+                            h5 Trunk Release Notes
+                            p {{ vehicle.remotestart.notes.trunk_release }}
+
+                    div.col-xs-12.col-sm-6(ng-if="vehicle.remotestart.notes.tech_tip")
+                        div.alert.alert-warning
+                            h5 Tech Tip
+                            p {{ vehicle.remotestart.notes.tech_tip }}
+
+
+
+if devMode
+    div.row.spaced(ng-show="vehicle")
+        div.col-xs-12
+            div.jumbotron.bg-primary
+                pre {{ vehicle | json }}

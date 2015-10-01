@@ -1,0 +1,47 @@
+/**
+  @file Global Formatting
+  @author Thomas Ibarra <sparksd2145.dev@gmail.com>
+*/
+
+// import shared variables
+@import (reference) "variables";
+
+body[ng-app] {
+  background: #f7f7f7;
+  font-family: 'Roboto', 'sans-serif';
+
+  h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+[type="search"] {
+  -moz-appearance:    textfield;
+  -webkit-appearance: textfield;
+  appearance: textfield;
+}
+
+#wrapper {
+  background: @wrapper-background;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+.progress.huge {
+  width: 100%;
+  height: 260px;
+  padding: 10px;
+}
+
+.well {
+
+  &.application {
+    text-align: center;
+    padding: 20px;
+  }
+}

@@ -1,0 +1,32 @@
+//-
+    @file Home page of Bluebird.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+
+div(layout='column', layout-margin, layout-padding)
+    div.text-center
+        h2 The Bluebird Team
+
+    div(layout="row", layout-padding, flex="50", flex-sm="100").md-whiteframe-4dp
+        a.media-left(href="/static/images/developers/thomas.jpg", target="_new")
+            img.thumbnail(src="/static/images/developers/thomas.jpg", width="100")
+        div(flex, layout-padding, layout='column')
+            h3.media-heading
+                strong Thomas Ibarra &nbsp;
+            small Lead Developer, Project Founder
+            p A self-taught, eager software developer in passionate pursuit of progress. A significant contributor to the Employee Toolkit,
+                | Thomas set out to satisfy a necessity at the retail level to deliver a pocket reference that would keep customers engaged
+                | and employees on point.
+
+//-
+    div.col-xs-12.col-sm-6
+        div.media.module
+            a.media-left(title="That's you, right?")
+                span.fa-stack.fa-lg.fa-4x
+                    i.fa.fa-circle.fa-stack-2x
+                    i.fa.fa-child.fa-stack-1x(style="color: orange")
+            div.media-body
+                h5.media-heading
+                    strong The Special &nbsp;
+                small The Most Important Person
+                    span.hidden-xs &nbsp;in the Universe
+                    p It could be you! Join our team today!

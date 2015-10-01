@@ -1,0 +1,88 @@
+/**
+  @file Transitions
+  @author Thomas Ibarra <sparksd2145.dev@gmail.com>
+*/
+
+// Import shared less-easing library
+@import (reference) '../../../../../bower_components/less-easing/less/less-easing';
+
+@default-duration: .3s;
+
+.transition-property(@property){
+  -webkit-transition-property+: @property;
+  -moz-transition-property+: @property;
+  -ms-transition-property+: @property;
+  -o-transition-property+: @property;
+  transition-property+: @property;
+}
+
+.transition-duration(@time) {
+  -webkit-transition-duration: @time;
+  -moz-transition-duration: @time;
+  -ms-transition-duration: @time;
+  -o-transition-duration: @time;
+  transition-duration: @time;
+}
+
+.transition-ease(@timing-function) {
+  -webkit-transition-timing-function: @timing-function;
+  -moz-transition-timing-function: @timing-function;
+  -ms-transition-timing-function: @timing-function;
+  -o-transition-timing-function: @timing-function;
+  transition-timing-function: @timing-function;
+}
+
+.t-bg {
+  .transition-duration(@default-duration);
+  .transition-ease(ease);
+
+  .transition-property('background');
+}
+
+.t-color {
+  .transition-duration(@default-duration);
+  .transition-ease(ease);
+
+  .transition-property('color');
+}
+
+.t-color-bg {
+  .transition-duration(@default-duration);
+  .transition-ease(ease);
+
+  .transition-property('color');
+  .transition-property('background');
+}
+
+.t-hover {
+  .transition-duration(@default-duration);
+  .transition-ease(ease);
+
+  .transition-property(background);
+  .transition-property(color);
+
+  &-fast {
+    .transition-duration(.15s);
+  }
+}
+
+.t-slide {
+  .transition-duration(.6s);
+  .transition-ease(@easeOutCubic);
+
+  .transition-property(width);
+  .transition-property(margin);
+  .transition-property(right);
+}
+
+.t-shadow {
+  .transition-duration(.3s);
+  .transition-ease(@easeOutCubic);
+
+  .transition-property(box-shadow);
+}
+
+.t-shadow-slide {
+  .t-shadow();
+  .t-slide();
+}

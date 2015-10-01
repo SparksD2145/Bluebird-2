@@ -1,0 +1,46 @@
+doctype html
+html
+    head
+        title= title
+        link(rel="manifest", href="manifest.json")
+        meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no")
+        meta(name="theme-color", content="#337ab7")
+        meta(name="mobile-web-app-capable", content="yes")
+        meta(name="apple-mobile-web-app-capable", content="yes")
+        meta(name="description", content="Bluebird is an unofficial product reference engine for best buy employees and vendors, powered by the Best Buy Developer APIs and the Bluebird team.")
+        base(href="/")
+
+        if devMode
+            include includes/environments/dev
+        else
+            include includes/environments/prod
+
+        include includes/global/styles
+        include includes/global/scripts
+
+    body(ng-app="Bluebird", layout="row", ng-controller="Bluebird.Controllers.Search", md-swipe-left="closeSidebar()", md-swipe-right="openSidebar()")
+        md-sidenav(md-is-locked-open="$mdMedia('min-width: 960px')", md-component-id="left")#sidebar
+            md-content(layout="column", ng-click="closeSidebar()").md-primary
+                header(layout="column", layout-align="center center")
+                    h1
+                        img(src="/static/images/logos/bluebird-logo-small.png", width="200")
+                    h1.md-display-2 Bluebird
+                    h2.md-subhead Pocket Product Reference Engine
+
+                md-button(href="/#!/").md-primary
+                    md-icon home
+                    span Home
+                md-button(href="/#!/about").md-primary
+                    md-icon info
+                    span About Bluebird
+
+        div(layout="column", flex)#wrapper
+            md-toolbar(md-scroll-shrink="true")#top
+                div(layout="row").md-toolbar-tools
+                    a.bright(ng-click="toggleSidebar()", hide-gt-md, flex="10")
+                        md-icon menu
+
+                    form(role="search", ng-submit="handleSearch()", flex-sm, flex="35")
+                        input(type="search", placeholder="{{ placeholder }}", ng-model="searchQuery", ng-dblClick="clearSearch()")
+
+            div#main(ng-view, layout-fill, touch-dismiss-search)

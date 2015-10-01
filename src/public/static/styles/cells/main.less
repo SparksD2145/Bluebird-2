@@ -1,0 +1,143 @@
+/**
+ * @file Main Cell LESS/CSS File
+ * @author Thomas Ibarra <sparksd2145.dev@gmail.com>
+*/
+
+@import "../common/variables";
+
+#main {
+  position: absolute;
+  transition-property: transform, opacity;
+  //transform-origin: left center;
+  transition-timing-function: linear;
+  z-index: 10;
+  transform: rotateY(0deg);
+
+  &.ng-enter {
+    transition-duration: .2s;
+    opacity: 0;
+    transform: rotateY(180deg);
+    z-index: 5;
+
+    &.ng-enter-active {
+      opacity: 1;
+      transform: rotateY(0deg);
+    }
+  }
+
+  &.ng-leave {
+    opacity: 1;
+    z-index: 15;
+    transform: rotateY(0);
+    transition-duration: .1s;
+
+    &.ng-leave-active {
+      opacity: 0;
+      transform: rotateY(-180deg);
+    }
+  }
+
+
+  .spaced {
+    margin-top: 15px;
+
+    &-small {
+      margin-top: 5px;
+    }
+  }
+
+  .row {
+    &.pagebar {
+      background: #d7d7d7;
+      padding-top: 5px;
+      padding-bottom: 5px;
+
+      .btn {
+        margin: 0 2px;
+      }
+
+      [type=checkbox] {
+        margin: 0;
+        vertical-align: middle;
+      }
+    }
+  }
+
+  .result-item {
+    margin: 0;
+    font-size: 12px;
+
+    .product {
+      text-decoration: none;
+
+      &, &:link, &:visited, &:focus {
+        background: white;
+      }
+
+      &:hover, &:active {
+        background: lightblue;
+        text-decoration: none;
+      }
+
+      &-list {
+        background: transparent;
+      }
+      &-thumbnail {
+        background: white;
+        padding: 0;
+        margin-bottom: 0;
+        height: 90px;
+        width: 70px;
+        //-width: 70px;
+        border: 1px solid #ccc;
+
+        .badges {
+          padding: 0;
+          margin: 0;
+          position: relative;
+          width: 100%;
+
+          .badge {
+            background-color: red;
+            padding: 3px 0;
+            text-align: center;
+            border-radius: 0;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+          }
+        }
+      }
+
+      &-header-img {
+        margin-bottom: 10px;
+      }
+
+      &-image {
+        background-position: center;
+        height: 100%;
+        background-repeat: no-repeat;
+      }
+
+      &-name {
+        //      overflow-x: hidden;
+        //      text-overflow: ellipsis;
+        //      white-space: nowrap;
+        width: 100%;
+      }
+      &-data {
+        color: #999;
+        margin-top: 5px;
+
+        span {
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+
+      &.perform-extended-search {
+        border: 1px #333 solid;
+      }
+    }
+  }
+}

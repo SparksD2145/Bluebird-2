@@ -1,0 +1,47 @@
+/**
+ * @file Navbar master LESS/CSS file.
+ * @author Thomas Ibarra <sparksd2145.dev@gmail.com>
+*/
+
+@import "../common/variables";
+
+#top {
+  color: white;
+  border: none;
+
+  .bright {
+    margin-right: 10px;
+
+    &, &:active, &:focus {
+      color: white;
+    }
+
+    &:hover {
+      color: #e7e7e7;
+    }
+
+  }
+
+  input[type=search] {
+    background: lightskyblue;
+    color: #efefef;
+    text-align: center;
+    border: none;
+    width: 100%;
+
+    &::-webkit-input-placeholder {
+      color: #efefef;
+      text-align: center;
+    }
+
+    &:focus {
+      background: white;
+      color: black;
+
+      &::-webkit-input-placeholder {
+        color: #cccccc;
+      }
+    }
+
+  }
+}

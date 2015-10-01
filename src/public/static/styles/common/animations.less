@@ -1,0 +1,24 @@
+/**
+  @file Animations
+  @author Thomas Ibarra <sparksd2145.dev@gmail.com>
+*/
+
+// Import shared less-easing library
+@import (reference) '../../../../../bower_components/less-easing/less/less-easing';
+
+@default-animation-duration: 2s;
+
+.animate-breathing { animation: keys_breathing @default-animation-duration @easeInOutCubic 0s infinite alternate both; }
+@keyframes keys_breathing { from { opacity: 1; } to { opacity: 0; } }
+
+.animate-spin-x { animation: keys_spin_x @default-animation-duration linear 0s infinite normal; }
+@keyframes keys_spin_x { from { transform: rotateX(0deg); } to { transform: rotateX(359deg); } }
+
+.animate-spin-y { animation: keys-spin-y @default-animation-duration linear 0s infinite normal; }
+@keyframes keys-spin-y { from { transform: rotateY(0deg); } to { transform: rotateY(359deg); } }
+
+.animate-spin-z { animation: keys-spin-z @default-animation-duration linear 0s infinite normal; }
+@keyframes keys-spin-z { from { transform: rotateZ(0deg); } to { transform: rotateZ(359deg); } }
+
+.animate-spin-angle { animation: keys-spin-angle @default-animation-duration linear 0s infinite normal; }
+@keyframes keys-spin-angle { from { transform: rotate3d(1, 1, 0, 0); } to { transform: rotate3d(1, 1, 0, 359deg); } }

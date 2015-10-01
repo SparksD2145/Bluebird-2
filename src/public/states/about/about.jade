@@ -1,0 +1,39 @@
+//-
+    @file About page of Bluebird.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+
+div(layout="row", layout-sm="column")
+    div(flex-sm="100", flex="50", layout-margin)
+        div.application.well.md-whiteframe-5dp
+            h1
+                img(src="/static/images/logos/bluebird-logo-small.png", width="200")
+            h1.md-display-2 Bluebird
+            h3(style="margin-top: 0"): include ../../../../VERSION.md
+        p.
+            Intended as a pocket toolkit, Bluebird is designed to quickly and quietly retrieve product information
+            from either the Bluebird database or the public <strong><a href="http://developer.bestbuy.com" target="_new">Best Buy Developer APIs</a></strong>
+            for use by store representatives and vendors without requiring client devices to reside on the Best Buy internal network.
+            By relying on Best Buy's public APIs instead of the company's internal applications,
+            Bluebird can function outside of the company's internal network, allowing employees to utilize their own devices to assist customers.
+
+    div(layout="column", flex, layout-margin)
+        div
+            h3 A Note on Availability
+            p.
+                When performing product lookups, Bluebird utilizes publicly-available data returned by the
+                <strong><a href="http://developer.bestbuy.com" target="_new">Best Buy Developer APIs</a></strong>.
+                This means information such as the quantity of a certain product within a given store is unavailable to us,
+                allowing Bluebird to only provide an affirmative or negative "in inventory" result. Theoretically, if Bluebird resided within
+                the internal Best Buy network, we could provide more in-depth data; however, as Bluebird is purposefully off the Best Buy
+                internal network for use on Bring Your Own Devices, this data simply cannot be retrieved.
+        div
+            h3 Development
+            p.
+                Bluebird is an evolving application whose ongoing development is focused on delivering a performance-heavy, productivity-minded platform.
+                The application is currently in early beta, but is not expected to be ready for full-time use until its release version (1.0.0).
+                Issues and feature requests can be submitted via
+                <a href="http://github.com/SparksD2145/Bluebird/"><strong>Bluebird's public github repository</strong></a>.
+                Bluebird is developed by the <a href="/#!/team"><strong>Bluebird team</strong></a>.
+
+        md-content
+            include:markdown ../../../../RELEASE.md

@@ -1,0 +1,62 @@
+//-
+    @file Home page of Bluebird.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+div.searchPage(layout="column")
+    //-div(layout).pagebar.text-left
+        div.btn-group
+            a.btn.btn-primary.btn-sm.dropdown-toggle(data-toggle="dropdown") Filters &nbsp;
+                span.caret
+            ul.dropdown-menu(role=menu)
+                li(ng-repeat="button in filterOptions", ng-click="button.active = !button.active; button.filter();", ng-class="{ active: button.active }", style="padding: 10px")
+                    a(style="padding: 10px")
+                        h4 {{ button.text }}
+        div.btn-group
+            a.btn.btn-primary.btn-sm.dropdown-toggle(data-toggle="dropdown") Sorting &nbsp;
+                span.caret
+            ul.dropdown-menu(role=menu)
+                li(ng-repeat="button in sortOptions", ng-click="button.sort(button.key);", style="padding: 10px")
+                    a(style="padding: 10px")
+                        h4 {{ button.text }}
+    div(ng-hide="isLoaded || noMatch", flex, layout-align="center center", layout="column", layout-margin)
+            //-img(src="/static/images/logos/bluebird-logo-small.png").animate-spin-z
+            div(layout-align="center center", layout).progress.huge
+                md-progress-circular(md-mode="indeterminate", md-diameter="200").md-accent
+            br
+            h3(ng-if="!extendedSearch", flex).text-center Searching...
+            h3(ng-if="extendedSearch", flex).text-center Querying...
+
+    div(ng-show="isLoaded && !noMatch", flex, layout, layout-wrap, layout-margin, ng-).product-list
+        div.result-item(ng-repeat="result in products", flex="25", flex-md="50", flex-sm="100", layout)
+            a.product(data-sku="", ng-href="/#!/product/{{ result._id }}", layout, layout-padding, flex)
+                div(flex-gt-sm="33", lex-sm="25").product-thumbnail
+                    div(style="background: url('{{ result.images.thumbnailImage }}'); background-size: contain; background-repeat: no-repeat; background-position: center;").product-image
+                    div.badges
+                        //- Badges are listed in reverse order of priority. One will override the other, place most important at top.
+                        span.badge(ng-if="result.pricing.isOnSale", style="background-color: #3ebbdd;")
+                            small On Sale
+                        span.badge(ng-if="!result.availability.hasInStoreAvailability", style="background-color: red;")
+                            small Unavailable
+                        span.badge(ng-if="result.marketplace.isMarketplaceItem", style="background-color: orange;")
+                            small Marketplace
+                div(flex)
+                    h3.product-name {{ result.name }}
+                    div.product-data
+                        div
+                            b SKU:&nbsp;
+                            span {{ result.identifiers.sku }}
+                        div
+                            b Price:&nbsp;
+                            span {{ result.pricing.isOnSale? result.pricing.salePrice : result.pricing.regularPrice | currency }}
+        if usingDatabase
+            div.result-item(layout, flex="25", flex-md="50", flex-sm="100")
+                a.product.perform-extended-search(ng-click="useExtendedSearch()", ng-hide="extendedSearch", layout="column", layout-padding, flex)
+                    h3.product-name Didn't find it?
+                    h5 Rats! Click here to try again.
+
+    div.row.spaced(ng-show="noMatch")
+        div.col-xs-12
+            div.bg-warning.text-warning
+                div.jumbotron
+                    i.fa.fa-times-circle.pull-left.fa-4x
+                    h3 Drat! Foiled again.
+                    h5 Well, it seems this search was a bust. How about another?

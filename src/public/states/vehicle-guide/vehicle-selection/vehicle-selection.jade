@@ -1,0 +1,47 @@
+//-
+    @file Vehicle Guide start page.
+    @author Thomas Ibarra <sparksd2145@gmail.com>
+div.row.spaced
+    div.col-xs-12.col-sm-6
+        div.jumbotron.bg-primary.text-center(ng-hide="vehicle")
+            h1
+                span.fa-stack.fa-lg.fa-2x
+                    i.fa.fa-circle.fa-2x.fa-stack-1x
+                    i.fa.fa-car.fa-stack-1x.fa-inverse(style="color:orange;")
+            br
+            h2 Vehicle Guide
+            h5 Powered by Geek Squad Central.
+            p
+                h5.
+                    Let's find your vehicle.
+            br
+            div.container-fluid
+                form(ng-submit="getVehicle()")
+                    div.row(ng-show="!years")
+                        div.col-xs-12.text-center
+                            i.fa.fa-spin.fa-spinner.fa-3x
+
+                    div.row(ng-hide="!years")
+                        select.col-xs-12(ng-model="yearSelected", ng-change="vehicleMakes()")
+                            option(ng-repeat="year in years", value="{{ year }}") {{ year }}
+
+                    div.row(ng-show="makesLoading").spaced
+                        div.col-xs-12.text-center
+                            i.fa.fa-spin.fa-spinner.fa-3x
+
+                    div.row(ng-hide="!makes").spaced
+                        select.col-xs-12(ng-model="makeSelected", ng-change="vehicleModels()")
+                            option(ng-repeat="make in makes", value="{{ make }}") {{ make }}
+
+                    div.row(ng-show="modelsLoading").spaced
+                        div.col-xs-12.text-center
+                            i.fa.fa-spin.fa-spinner.fa-3x
+
+                    div.row(ng-hide="!models").spaced
+                        select.col-xs-12(ng-model="modelSelected")
+                            option(ng-repeat="model in models", value="{{ model }}") {{ model }}
+
+                    div.row.spaced(ng-hide="!modelSelected")
+                        div.col-xs-12.text-center
+                            p
+                                input.btn.btn-primary(type="submit", role="button", ng-click="getVehicle()", value="Go!")
